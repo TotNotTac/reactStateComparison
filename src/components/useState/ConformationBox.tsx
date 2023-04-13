@@ -8,6 +8,7 @@ export const StateConformationBox: FC = () => {
 
     return <div>
         <div>
+            <button disabled={confirmed} onClick={()=>setConformationDialogueShowing(true)}>Show</button>
             <button onClick={()=>{
                 setConfirmed(false);
                 setConformationDialogueShowing(false)
