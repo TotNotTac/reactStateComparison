@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FC } from "react";
-import { ConformationDialogue } from "../ConformationDialogue";
+import { ConformationDialogue } from "../conformationDialogue";
 
 export const StateConformationBox: FC = () => {
     const [confirmed, setConfirmed] = useState(false);
@@ -8,13 +8,12 @@ export const StateConformationBox: FC = () => {
 
     return <div>
         <div>
-            <button disabled={confirmed} onClick={()=>setConformationDialogueShowing(true)}>Show</button>
             <button onClick={()=>{
                 setConfirmed(false);
                 setConformationDialogueShowing(false)
             }}>Reset</button>
         </div>
 
-        {conformationDialogueShowing && !confirmed && <ConformationDialogue onConfirm={()=>setConfirmed(true)} />}
+        {conformationDialogueShowing && !confirmed && <ConformationDialogue onConfirm={()=>setConfirmed(true)} onCancel={()=>setConformationDialogueShowing(false)}/>}
     </div>
 }

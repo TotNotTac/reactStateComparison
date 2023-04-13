@@ -1,22 +1,19 @@
 import { useMachine } from "@xstate/react";
 import { FC } from "react";
-import { createMachine } from "xstate";
-import { ConformationDialogue } from "../ConformationDialogue";
+import { assign, createMachine } from "xstate";
+import { ConformationDialogue } from "../conformationDialogue/";
 
-type ConformationEvent =
+const conformationMachine = createMachine({
+    /** @xstate-layout N4IgpgJg5mDOIC5QGMD2A7AZqgTgWwEMAXASwwGIc4wiBtABgF1FQAHVWE0jFkAD0QBGAKzCAdADYA7ABYZUgMwAmEYIlKAnAA4ANCACeiGWI1Kl9LfQ0bB9YUqn2Avk71osuQt3RiAFiQgIMHRyWF9UAHcAERICABtUKABXMAZmJBB2Tm9eAQQlCQ0xGSsSu1tlKQK9QwQtKTFhDQkFUSspehlCpRc3DGx8YjIfMMiSdChyd0wSfDTeLK5h3MRhKQaC7XopCXqO3QNEesbm1o1hC2btqV6Qac8hjDFRiPHJ5AJ0ZDA4+YzFnIZPIKQQKMT0AoSUGCQTnUFKBQ1RAqYpaGQKVpo4QKKSCLouVwgdCoILwDL3QaAtgcJY8IGIDTGZRaQRKYRIhAAWi0Skaaws9mEaNhiluFK8wz8ASC6AWNKp-CEMl5zNZ7MOdQaQoxOt1GJkYv6D28z3Crwmcuyy3pCHR4noILZHI09HBWj1HoNhPFjx801meEgltpsptwnUYh2JTZ522PMEHJhxVjSi0axa9hZEgJTiAA */
+    id: "conformation",
+    tsTypes: {} as import("./ConformationBox.typegen").Typegen0,
+    schema: {
+        events: {} as 
             | { type: "showDialogue" }
             | { type: "confirm" }
             | { type: "reset" }
-
-type ConformationState = (
-    | { value: "hidden"}
-    | { value: "showing"}
-    | { value: "confirmed"}) 
-    & {context: undefined}
-
-const conformationMachine = createMachine<undefined, ConformationEvent, ConformationState >({
-    /** @xstate-layout N4IgpgJg5mDOIC5QGMD2A7AZqgtgQwBcBLDAOgAsiIIx0BiWc1AdwBEi8AbVKAVzADaABgC6iUAAdUsIsQziQAD0QBGAGwBOUkJ1CVQgCwqAHBoCseswBoQAT0QAmIQ9IOLOt3uN6DAX182aFi4hCTopIwsROhQdEGYRABOOMJiSCBSMnLoCsoIBmZqpADsQgDMKg7FGg7GZirqajb2CE4unh4WJj7+gRjY+Nmk8Uk4kHSJcGAEqQqZsmG5iAbFZq4aasbeZgZCxgZlxQbNiMYqpAYaVxpnxmpqtQ5qvSDxIUORzNGxk7DTs+l5tklggymCSuUVIchGpimUDLCTggVAYXKsPE4zOY7mZiv4AiB0KgaPB0m9BotAdIFvJ0nkALRNOyIelra5XbwbdTGBxGF7k0JkSjUWhzanAunLBxI4zFUhmYxgsoObFlMxPPwEgUfJhfGJirKU0B5MEGCEVaGw+GI5mtZwldwOTHYtS4-n9d5hYb9UaQA00nKShC4tYPLqQ1GbYpIjRCbSKsEqhVqjX43xAA */
-    id: "confomation",
+            | { type: "cancel"},
+    },
     initial: "hidden",
     states: {
         "hidden": {
@@ -25,25 +22,25 @@ const conformationMachine = createMachine<undefined, ConformationEvent, Conforma
         "showing": { 
             on: {
                 confirm: "confirmed",
-                reset: "hidden"
-            }
+                cancel: "hidden"
+            },
         },
-        "confirmed": {
-            on: { reset: "hidden"}
-        }
+        "confirmed": {}
+    },
+    on: {
+        reset: ".hidden"
     }
 })
 
 export const StateMachineConformationBox: FC = () => {
-
     const [state, send] = useMachine(conformationMachine)
 
     return <div>
         <div>
-            <button disabled={state.value === "confirmed"} onClick={()=>send("showDialogue")}>Show</button>
+            <button disabled={!state.can("showDialogue")} onClick={()=>send("showDialogue")}>Show</button>
             <button onClick={()=>send("reset")}>Reset</button>
         </div>
 
-        {state.value === "showing" && <ConformationDialogue onConfirm={()=>send("confirm")} />}
+        {state.matches("showing") && <ConformationDialogue onConfirm={()=>send("confirm")} onCancel={()=>send("cancel")} />}
     </div>
 }
