@@ -1,6 +1,6 @@
 import { useMachine } from "@xstate/react";
 import { FC } from "react";
-import { assign, createMachine } from "xstate";
+import { createMachine } from "xstate";
 import { ConformationDialogue } from "../conformationDialogue/";
 
 const conformationMachine = createMachine({
@@ -41,6 +41,7 @@ export const StateMachineConformationBox: FC = () => {
             <button onClick={()=>send("reset")}>Reset</button>
         </div>
 
-        {state.matches("showing") && <ConformationDialogue onConfirm={()=>send("confirm")} onCancel={()=>send("cancel")} />}
+        {state.matches("showing") && 
+        <ConformationDialogue onConfirm={()=>send("confirm")} onCancel={()=>send("cancel")} />}
     </div>
 }

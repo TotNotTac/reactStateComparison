@@ -15,6 +15,7 @@ export const StateConformationBox: FC = () => {
             }}>Reset</button>
         </div>
 
-        {conformationDialogueShowing && !confirmed && <ConformationDialogue onConfirm={()=>setConfirmed(true)} onCancel={()=>setConformationDialogueShowing(false)}/>}
+        {conformationDialogueShowing && !confirmed && 
+        <ConformationDialogue onConfirm={()=>setConfirmed(true)} onCancel={()=>setConformationDialogueShowing(false)}/>}
     </div>
 }
